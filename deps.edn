@@ -1,0 +1,19 @@
+{:path ["src" "notebooks"]
+ :deps {io.github.nextjournal/clerk {:mvn/version "0.5.346"}
+        enlive/enlive {:mvn/version "1.1.6"}
+        org.clojure/data.csv {:mvn/version "1.0.1"}
+
+        meta-csv/meta-csv                  {:mvn/version "0.1.0"}
+
+        ;; some statistical routines
+        kixi/stats {:mvn/version "0.5.4"}
+
+        ;; SICM utils numerical and physics routines
+        sicmutils/sicmutils {:mvn/version "0.20.1"}
+
+        ;; semantic web goodies and box/arrow graphs
+        jackrusher/mundaneum               {:git/url "https://github.com/jackrusher/mundaneum/"
+                                            :sha "84476918ee47b66a2d6128e1a90780e52fd2ae44"}
+        arrowic/arrowic                    {:mvn/version "0.1.1"}
+        }
+ }
