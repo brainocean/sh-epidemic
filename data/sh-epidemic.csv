@@ -1,4 +1,5 @@
 date,confirmed,nosymptom,transformed,confirmed-ctrl,nosymptom-ctrl,confirmed-import,nosymptom-import
+2022-4-13,2573,25146,114,2200,24548,,
 2022-4-12,1189,25141,23,867,24500,1,0
 2022-4-11,994,22348,273,439,21844,4,1
 2022-4-10,914,25173,47,564,24230,3,0
@@ -18,4 +19,3 @@ date,confirmed,nosymptom,transformed,confirmed-ctrl,nosymptom-ctrl,confirmed-imp
 2022-3-27,50,3450,,17,2833,10,4
 2022-3-26,45,2631,,27,2363,6,2
 2022-3-25,38,2231,5,3,1773,9,2
-2022-3-24,29,1580,,12,1455,12,5
