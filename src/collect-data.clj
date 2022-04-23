@@ -51,9 +51,10 @@
 
 (defn collect-data []
   (write-csv
-   (into
+   (concat
     (parse-index-page "/index.html")
-    (parse-index-page "/index_2.html"))))
+    (parse-index-page "/index_2.html")
+    (parse-index-page "/index_3.html"))))
 
 (comment
   (collect-data))

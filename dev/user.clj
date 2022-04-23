@@ -7,6 +7,6 @@
 ;; or let Clerk watch the given `:paths` for changes
 (clerk/serve! {:watch-paths ["notebooks"]})
 
-(clerk/show! "notebooks/stats.clj")
-
-(clerk/clear-cache!)
+(do
+  (clerk/clear-cache!)
+  (clerk/show! "notebooks/stats.clj"))
