@@ -9,7 +9,7 @@
 (defn confirmed-net [rec]
   {:confirmed-net  (- (:confirmed rec)
                       (:confirmed-ctrl rec)
-                      (Integer/parseInt (or  (:transformed rec) "0")))})
+                      (Integer/parseInt (or  (str (:transformed rec)) "0")))})
 
 (defn nosymptom-net [rec]
   {:nosymptom-net (- (:nosymptom rec) (:nosymptom-ctrl rec))})
@@ -54,6 +54,7 @@
   :encoding {:x {:field :date :type :temporal}}
   :layer [(mk-layer :confirmed :green)
           (mk-layer :confirmed-ctrl :blue)
+          (mk-layer :transformed :orange)
           (mk-layer :confirmed-net :red)]
   })
 

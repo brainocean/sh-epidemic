@@ -6,10 +6,12 @@
 (defn map-vals [m f]
   (into {} (for [[k v] m] [k (f v)])))
 
-(defn parse-number [r txt]
-  (->> (re-find r txt)
+(defn parse-number [rs txt]
+  (->> rs
+       (keep #(re-find % txt))
+       first
        rest
-       (mapv #(or % "0"))
+       ;; (mapv #(if (nil? %) "0" %))
        (clojure.string/join "-")))
 
 (defn parse-stat-page [url]
@@ -18,14 +20,14 @@
                 (e/select [:div#ivs_content])
                 first
                 e/text)
-        regexes {:date #"(\d{4})年(\d{1,2})月(\d{1,2})日"
-                 :confirmed #"确诊病例(\d+)例"
-                 :nosymptom #"和无症状感染者(\d+)例"
-                 :transformed #"其中(\d+)例确诊病例为此前无症状感染者转归"
-                 :confirmed-ctrl #"(\d+)例确诊病例和(?:\d+)例无症状感染者在隔离管控中发现"
-                 :nosymptom-ctrl #"(?:\d+)例确诊病例和(\d+)例无症状感染者在隔离管控中发现"
-                 :confirmed-import #"新增境外输入性新冠肺炎确诊病例(\d+)例(?:和无症状感染者\d+例)?"
-                 :nosymptom-import #"新增境外输入性新冠肺炎确诊病例(?:\d+)例(?:和无症状感染者(\d+)例)?"
+        regexes {:date [ #"(\d{4})年(\d{1,2})月(\d{1,2})日" ]
+                 :confirmed [ #"确诊病例(\d+)例" ]
+                 :nosymptom [ #"和无症状感染者(\d+)例" ]
+                 :transformed [#"其中(\d+)例确诊病例为此前无症状感染者转归" #"既往无症状感染者转为确诊病例(\d+)例"]
+                 :confirmed-ctrl [ #"(\d+)例确诊病例和(?:\d+)例无症状感染者在隔离管控中发现" ]
+                 :nosymptom-ctrl [ #"(?:\d+)例确诊病例和(\d+)例无症状感染者在隔离管控中发现" ]
+                 :confirmed-import [ #"新增境外输入性新冠肺炎确诊病例(\d+)例(?:和无症状感染者\d+例)?" #"新增境外输入性新冠肺炎确诊病例(\d+)例" ]
+                 :nosymptom-import [ #"新增境外输入性新冠肺炎确诊病例(?:\d+)例和(?:无症状感染者(\d+)例)?" #"新增境外输入性新冠肺炎无症状感染者(\d+)例" ]
                  }
         ]
 
