@@ -6,13 +6,21 @@
 (defn map-vals [m f]
   (into {} (for [[k v] m] [k (f v)])))
 
+(defn re-find-multi
+  "re-find multiple regex rs on txt"
+  [txt rs]
+  (keep #(re-find % txt) rs))
+
+(defn default-to [d v]
+  (if (empty? v) d v))
+
 (defn parse-number [rs txt]
   (->> rs
-       (keep #(re-find % txt))
-       first
-       rest
-       ;; (mapv #(if (nil? %) "0" %))
-       (clojure.string/join "-")))
+       (re-find-multi txt)
+       first                         ; first matched result is a list
+       rest                          ; first is the whole match, rest are groups
+       (clojure.string/join "-")
+       (default-to "0")))
 
 (defn parse-stat-page [url]
   (let [txt (-> (java.net.URL. (str "https://wsjkw.sh.gov.cn" url))
@@ -21,9 +29,9 @@
                 first
                 e/text)
         regexes {:date [ #"(\d{4})年(\d{1,2})月(\d{1,2})日" ]
-                 :confirmed [ #"确诊病例(\d+)例" ]
+                 :confirmed [ #"新增本土新冠肺炎确诊病例(\d+)例" ]
                  :nosymptom [ #"和无症状感染者(\d+)例" ]
-                 :transformed [#"其中(\d+)例确诊病例为此前无症状感染者转归" #"既往无症状感染者转为确诊病例(\d+)例"]
+                 :transformed [#"其中(\d+)例确诊病例为(?:此前|既往)?无症状感染者转归" #"既往无症状感染者转为确诊病例(\d+)例"]
                  :confirmed-ctrl [ #"(\d+)例确诊病例和(?:\d+)例无症状感染者在隔离管控中发现" ]
                  :nosymptom-ctrl [ #"(?:\d+)例确诊病例和(\d+)例无症状感染者在隔离管控中发现" ]
                  :confirmed-import [ #"新增境外输入性新冠肺炎确诊病例(\d+)例(?:和无症状感染者\d+例)?" #"新增境外输入性新冠肺炎确诊病例(\d+)例" ]
@@ -33,12 +41,18 @@
 
     (map-vals regexes #(parse-number % txt))))
 
+(defn link-to-report-page? [elm]
+  (-> (get-in elm [:attrs :title])
+       (re-find-multi [#"新增本土新冠肺炎确诊病例" #"上海新增\d+例本土新冠肺炎确诊病例"])
+       not-empty))
+
 (defn parse-index-page [page-url]
   (let [elms (-> (java.net.URL.  (str  "https://wsjkw.sh.gov.cn/yqtb" page-url))
                  (e/html-resource)
                  (e/select [:ul.uli16 :li :a]))
         links (->> elms
-                   (filter #(re-find #"新增本土新冠肺炎确诊病例" (get-in % [:attrs :title] )))
+                   ;; (filter #(re-find #"新增本土新冠肺炎确诊病例" (get-in % [:attrs :title] )))
+                   (filter link-to-report-page?)
                    (map #(get-in % [:attrs :href]))
                    )]
     (mapv #(parse-stat-page %) links)))
